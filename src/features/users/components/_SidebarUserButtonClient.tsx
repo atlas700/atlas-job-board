@@ -10,8 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar"
-// import { SignOutButton } from "@/services/clerk/components/AuthButtons"
-import { useClerk } from "@clerk/nextjs"
+import { SignOutButton } from "@/services/clerk/components/AuthButtons"
+import {  useClerk } from "@clerk/nextjs"
 import {
   ChevronsUpDown,
   LogOutIcon,
