@@ -9,7 +9,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { SignedOut } from "@/services/clerk/components/AuthStatus";
+import { LogInIcon } from "lucide-react";
+import Link from "next/link";
 import { AppSidebarClient } from "./_AppSidebarClient";
+import { SidebarUserButton } from "@/features/users/components/SidebarUserButton";
 
 export default function HomePage() {
   return (
@@ -20,11 +24,24 @@ export default function HomePage() {
             <SidebarTrigger />
             <span className="text-xl text-nowrap">Atlas Jobs</span>
           </SidebarHeader>
-          <SidebarContent></SidebarContent>
+          <SidebarContent>
+            <SidebarMenu>
+              <SignedOut>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link href="/sign-in">
+                        <LogInIcon />
+                        <span>Sign In</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+              </SignedOut>
+            </SidebarMenu>
+          </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton>Hello </SidebarMenuButton>
+                <SidebarUserButton/>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
