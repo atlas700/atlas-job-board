@@ -4,7 +4,10 @@ import { inngest } from "../client";
 import { Webhook } from "svix";
 import { NonRetriableError } from "inngest";
 import { createUser, deleteUser, updateUser } from "@/features/users/db/users";
-import { createUserNotificationSettings } from "@/features/users/db/userSettings";
+import {
+  createUserNotificationSettings,
+  deleteUserNotificationSettings,
+} from "@/features/users/db/userSettings";
 
 function verifyWebhook({
   headers,
@@ -107,6 +110,7 @@ export const clerkDeleteUserDb = inngest.createFunction(
         throw new NonRetriableError("There was no user id found");
       }
 
+      await deleteUserNotificationSettings(userData.id);
       await deleteUser(userData.id);
     });
   },
