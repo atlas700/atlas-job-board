@@ -1,25 +1,30 @@
 import { db } from "@/server/db";
-import { UserTable } from "@/server/db/schema";
+import { OrganizationTable } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
-import { revalidateUserCache } from "./cache/organizations";
+import { revalidateOrganizationCache } from "./cache/organizations";
 
-export async function createUser(data: typeof UserTable.$inferInsert) {
-  await db.insert(UserTable).values(data).onConflictDoNothing();
-
-  revalidateUserCache(data.id);
-}
-
-export async function updateUser(
-  id: string,
-  data: Partial<typeof UserTable.$inferInsert>,
+export async function createOrganization(
+  data: typeof OrganizationTable.$inferInsert,
 ) {
-  await db.update(UserTable).set(data).where(eq(UserTable.id, id));
+  await db.insert(OrganizationTable).values(data).onConflictDoNothing();
 
-  revalidateUserCache(id);
+  revalidateOrganizationCache(data.id);
 }
 
-export async function deleteUser(id: string) {
-  await db.delete(UserTable).where(eq(UserTable.id, id));
+export async function updateOrganization(
+  id: string,
+  data: Partial<typeof OrganizationTable.$inferInsert>,
+) {
+  await db
+    .update(OrganizationTable)
+    .set(data)
+    .where(eq(OrganizationTable.id, id));
 
-  revalidateUserCache(id);
+  revalidateOrganizationCache(id);
+}
+
+export async function deleteOrganization(id: string) {
+  await db.delete(OrganizationTable).where(eq(OrganizationTable.id, id));
+
+  revalidateOrganizationCache(id);
 }

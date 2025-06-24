@@ -7,7 +7,8 @@ import { createUser, deleteUser, updateUser } from "@/features/users/db/users";
 import {
   createUserNotificationSettings,
   deleteUserNotificationSettings,
-} from "@/features/users/db/userSettings";
+} from "@/features/users/db/userNotificationSettings";
+import { createOrganization } from "@/features/organizations/db/organizations";
 
 function verifyWebhook({
   headers,
@@ -112,6 +113,35 @@ export const clerkDeleteUserDb = inngest.createFunction(
 
       await deleteUserNotificationSettings(userData.id);
       await deleteUser(userData.id);
+    });
+  },
+);
+
+export const clerkCreateOrganizationDb = inngest.createFunction(
+  {
+    id: "clerk/create-db-organization",
+    name: "Clerk - Create DB Organization",
+  },
+  { event: "clerk/organization.created" },
+  async ({ event, step }) => {
+    await step.run("Verify Clerk Webhook", async () => {
+      try {
+        await verifyWebhook(event.data);
+      } catch {
+        throw new NonRetriableError("Invalid Clerk Webhook Signature");
+      }
+    });
+
+    await step.run("Create Organization in DB", async () => {
+      const orgData = event.data.data;
+
+      await createOrganization({
+        id: orgData.id,
+        name: orgData.name,
+        imageUrl: orgData.image_url,
+        createdAt: new Date(orgData.created_at),
+        updatedAt: new Date(orgData.updated_at),
+      });
     });
   },
 );
