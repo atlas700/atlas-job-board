@@ -5,15 +5,36 @@ import {
   SidebarGroupAction,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { SidebarUserButton } from "@/features/users/components/SidebarUserButton";
+import { SidebarOrganizationButton } from "@/features/organizations/components/SidebarOrganizationButton";
+import { getCurrentOrganization } from "@/services/clerk/lib/getCurrentAuth";
 import { ClipboardIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default function EmployerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <Suspense>
+      <SuspendedEmployerLayout>{children}</SuspendedEmployerLayout>;
+    </Suspense>
+  );
+}
+
+async function SuspendedEmployerLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { orgId } = await getCurrentOrganization();
+
+  if (orgId == null) {
+    return redirect("/organizations/select");
+  }
+
   return (
     <AppSidebar
       content={
@@ -38,7 +59,7 @@ export default function EmployerLayout({
           />
         </>
       }
-      footerContent={<SidebarUserButton />}
+      footerContent={<SidebarOrganizationButton />}
     >
       <main className="flex-1">{children}</main>
     </AppSidebar>

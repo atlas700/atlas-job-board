@@ -1,22 +1,28 @@
-import { getCurrentUser } from "@/services/clerk/lib/getCurrentAuth";
-import { Suspense } from "react";
-import { SidebarUserButtonClient } from "./_SidebarUserButtonClient";
-import { SignOutButton } from "@/services/clerk/components/AuthButtons";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { SignOutButton } from "@/services/clerk/components/AuthButtons";
+import {
+  getCurrentOrganization,
+  getCurrentUser,
+} from "@/services/clerk/lib/getCurrentAuth";
 import { LogOutIcon } from "lucide-react";
+import { Suspense } from "react";
+import { SidebarOrganizationButtonClient } from "./_SidebarOrganizationButtonClient";
 
-export function SidebarUserButton() {
+export function SidebarOrganizationButton() {
   return (
     <Suspense>
-      <SidebarUserSuspense />
+      <SidebarOrganizationSuspense />
     </Suspense>
   );
 }
 
-async function SidebarUserSuspense() {
-  const { user } = await getCurrentUser({ allData: true });
+async function SidebarOrganizationSuspense() {
+  const [{ user }, { organization }] = await Promise.all([
+    getCurrentUser({ allData: true }),
+    getCurrentOrganization({ allData: true }),
+  ]);
 
-  if (user == undefined) {
+  if (user == undefined || organization == undefined) {
     return (
       <SignOutButton>
         <SidebarMenuButton>
@@ -28,12 +34,6 @@ async function SidebarUserSuspense() {
   }
 
   return (
-    <SidebarUserButtonClient
-      user={{
-        email: user.email,
-        name: user.name,
-        imageUrl: user.imageUrl,
-      }}
-    />
+    <SidebarOrganizationButtonClient user={user} organization={organization} />
   );
 }
