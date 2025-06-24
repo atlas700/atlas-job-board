@@ -1,6 +1,7 @@
+import { getOrganizationIdTag } from "@/features/organizations/db/cache/organizations";
 import { getUserIdTag } from "@/features/users/db/cache/users";
 import { db } from "@/server/db";
-import { UserTable } from "@/server/db/schema";
+import { OrganizationTable, UserTable } from "@/server/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { unstable_cacheTag as cacheTag } from "next/cache";
@@ -14,9 +15,28 @@ export async function getCurrentUser({ allData = false } = {}) {
   };
 }
 
+export async function getCurrentOrganization({ allData = false } = {}) {
+  const { orgId } = await auth();
+
+  return {
+    orgId,
+    organization:
+      allData && orgId != null ? await getOrganization(orgId) : undefined,
+  };
+}
+
 async function getUser(userId: string) {
   "use cache";
   cacheTag(getUserIdTag(userId));
 
   return db.query.UserTable.findFirst({ where: eq(UserTable.id, userId) });
+}
+
+async function getOrganization(orgId: string) {
+  "use cache";
+  cacheTag(getOrganizationIdTag(orgId));
+
+  return db.query.OrganizationTable.findFirst({
+    where: eq(OrganizationTable.id, orgId),
+  });
 }
