@@ -1,13 +1,12 @@
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
+import { SidebarNavMenuGroup } from "@/components/sidebar/SidebarNavMenuGroup";
 import {
   SidebarGroup,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarGroupAction,
+  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { SidebarUserButton } from "@/features/users/components/SidebarUserButton";
-import { SignedOut } from "@/services/clerk/components/AuthStatus";
-import { LogInIcon } from "lucide-react";
+import { ClipboardIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function EmployerLayout({
@@ -18,20 +17,26 @@ export default function EmployerLayout({
   return (
     <AppSidebar
       content={
-        <SidebarGroup>
-          <SidebarMenu>
-            <SignedOut>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/sign-in">
-                    <LogInIcon />
-                    <span>Sign In</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SignedOut>
-          </SidebarMenu>
-        </SidebarGroup>
+        <>
+          <SidebarGroup>
+            <SidebarGroupLabel>Job Listings</SidebarGroupLabel>
+            <SidebarGroupAction title="Add Job Listing" asChild>
+              <Link href={"/employer/job-listings/new"}>
+                <PlusIcon /> <span className="sr-only">Add Job</span>
+              </Link>
+            </SidebarGroupAction>
+          </SidebarGroup>
+          <SidebarNavMenuGroup
+            className="mt-auto"
+            items={[
+              {
+                href: "/",
+                label: "Job Board",
+                icon: <ClipboardIcon />,
+              },
+            ]}
+          />
+        </>
       }
       footerContent={<SidebarUserButton />}
     >
