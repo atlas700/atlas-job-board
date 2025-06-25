@@ -1,14 +1,18 @@
 import { env } from "@/env";
 import { inngest } from "../client";
 
-import { Webhook } from "svix";
-import { NonRetriableError } from "inngest";
-import { createUser, deleteUser, updateUser } from "@/features/users/db/users";
+import {
+  createOrganization,
+  deleteOrganization,
+  updateOrganization,
+} from "@/features/organizations/db/organizations";
 import {
   createUserNotificationSettings,
   deleteUserNotificationSettings,
 } from "@/features/users/db/userNotificationSettings";
-import { createOrganization } from "@/features/organizations/db/organizations";
+import { createUser, deleteUser, updateUser } from "@/features/users/db/users";
+import { NonRetriableError } from "inngest";
+import { Webhook } from "svix";
 
 function verifyWebhook({
   headers,
@@ -142,6 +146,60 @@ export const clerkCreateOrganizationDb = inngest.createFunction(
         createdAt: new Date(orgData.created_at),
         updatedAt: new Date(orgData.updated_at),
       });
+    });
+  },
+);
+
+export const clerkUpdateOrganizationDb = inngest.createFunction(
+  {
+    id: "clerk/update-db-organization",
+    name: "Clerk - Update DB Organization",
+  },
+  { event: "clerk/organization.updated" },
+  async ({ event, step }) => {
+    await step.run("Verify Clerk Webhook", async () => {
+      try {
+        await verifyWebhook(event.data);
+      } catch {
+        throw new NonRetriableError("Invalid Clerk Webhook Signature");
+      }
+    });
+
+    await step.run("Update Organization in DB", async () => {
+      const orgData = event.data.data;
+
+      await updateOrganization(orgData.id, {
+        name: orgData.name,
+        imageUrl: orgData.image_url,
+        updatedAt: new Date(orgData.updated_at),
+      });
+    });
+  },
+);
+
+export const clerkDeleteOrganizationDb = inngest.createFunction(
+  {
+    id: "clerk/delete-db-organization",
+    name: "Clerk - Delete DB Organization",
+  },
+  { event: "clerk/organization.deleted" },
+  async ({ event, step }) => {
+    await step.run("Verify Clerk Webhook", async () => {
+      try {
+        await verifyWebhook(event.data);
+      } catch {
+        throw new NonRetriableError("Invalid Clerk Webhook Signature");
+      }
+    });
+
+    await step.run("Delete Organization in DB", async () => {
+      const orgData = event.data.data;
+
+      if (orgData.id == null) {
+        throw new NonRetriableError("There was no organization id found");
+      }
+
+      await deleteOrganization(orgData.id);
     });
   },
 );
