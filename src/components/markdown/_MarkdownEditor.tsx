@@ -3,24 +3,22 @@
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
 import { cn } from "@/lib/utils";
 import {
-  headingsPlugin,
-  listsPlugin,
-  MDXEditor,
-  tablePlugin,
-  quotePlugin,
-  toolbarPlugin,
-  thematicBreakPlugin,
-  markdownShortcutPlugin,
-  linkPlugin,
-  type MDXEditorMethods,
-  type MDXEditorProps,
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
-  ListsToggle,
-  InsertThematicBreak,
+  headingsPlugin,
   InsertTable,
-  InsertCodeBlock,
-  codeBlockPlugin,
+  InsertThematicBreak,
+  linkPlugin,
+  listsPlugin,
+  ListsToggle,
+  markdownShortcutPlugin,
+  MDXEditor,
+  quotePlugin,
+  tablePlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+  type MDXEditorMethods,
+  type MDXEditorProps,
 } from "@mdxeditor/editor";
 import type { Ref } from "react";
 

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { LoadingSwap } from "@/components/LoadingSwap"
-import { MarkdownEditor } from "@/components/markdown/MarkdownEditor"
-import { Button } from "@/components/ui/button"
+import { LoadingSwap } from "@/components/LoadingSwap";
+import { MarkdownEditor } from "@/components/markdown/MarkdownEditor";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,37 +11,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   experienceLevels,
   type JobListingTable,
   jobListingTypes,
   locationRequirements,
-  wageIntervals
-} from "@/server/db/schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { type z } from "zod"
-import { createJobListing, updateJobListing } from "../actions/actions"
-import { jobListingSchema } from "../actions/schemas"
+  wageIntervals,
+} from "@/server/db/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { type z } from "zod";
+import { createJobListing } from "../actions/actions";
+import { jobListingSchema } from "../actions/schemas";
 import {
   formatExperienceLevel,
   formatJobType,
   formatLocationRequirement,
   formatWageInterval,
-} from "../lib/formatters"
-import { ProvinceSelectItems } from "./ProvinceSelectItems"
+} from "../lib/formatters";
+import { ProvinceSelectItems } from "./ProvinceSelectItems";
 
-const NONE_SELECT_VALUE = "none"
+const NONE_SELECT_VALUE = "none";
 
 export function JobListingForm({
   jobListing,
@@ -58,7 +58,7 @@ export function JobListingForm({
     | "wageInterval"
     | "city"
     | "locationRequirement"
-  >
+  >;
 }) {
   const form = useForm({
     resolver: zodResolver(jobListingSchema),
@@ -73,26 +73,28 @@ export function JobListingForm({
       type: "full-time",
       locationRequirement: "in-office",
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof jobListingSchema>) {
-    const action = jobListing
-      ? updateJobListing.bind(null, jobListing.id)
-      : createJobListing
-    const res = await action(data)
+    // const action = jobListing
+    //   ? updateJobListing.bind(null, jobListing.id)
+    //   : createJobListing
+    // const res = await action(data)
 
-    // if (res.error) {
-    //   toast.error(res.message)
-    // }
+    const res = await createJobListing(data);
+
+    if (res.error) {
+      toast.error(res.message);
+    }
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 @container"
+        className="@container space-y-6"
       >
-        <div className="grid grid-cols-1 @md:grid-cols-2 gap-x-4 gap-y-6 items-start">
+        <div className="grid grid-cols-1 items-start gap-x-4 gap-y-6 @md:grid-cols-2">
           <FormField
             name="title"
             control={form.control}
@@ -119,11 +121,11 @@ export function JobListingForm({
                       type="number"
                       value={field.value ?? ""}
                       className="rounded-r-none"
-                      onChange={e =>
+                      onChange={(e) =>
                         field.onChange(
                           isNaN(e.target.valueAsNumber)
                             ? null
-                            : e.target.valueAsNumber
+                            : e.target.valueAsNumber,
                         )
                       }
                     />
@@ -135,7 +137,7 @@ export function JobListingForm({
                       <FormItem>
                         <Select
                           value={field.value ?? ""}
-                          onValueChange={val => field.onChange(val ?? null)}
+                          onValueChange={(val) => field.onChange(val ?? null)}
                         >
                           <FormControl>
                             <SelectTrigger className="rounded-l-none">
@@ -143,7 +145,7 @@ export function JobListingForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {wageIntervals.map(interval => (
+                            {wageIntervals.map((interval) => (
                               <SelectItem key={interval} value={interval}>
                                 {formatWageInterval(interval)}
                               </SelectItem>
@@ -160,8 +162,8 @@ export function JobListingForm({
             )}
           />
         </div>
-        <div className="grid grid-cols-1 @md:grid-cols-2 gap-x-4 gap-y-6 items-start">
-          <div className="grid grid-cols-1 @xs:grid-cols-2 gap-x-2 gap-y-6 items-start">
+        <div className="grid grid-cols-1 items-start gap-x-4 gap-y-6 @md:grid-cols-2">
+          <div className="grid grid-cols-1 items-start gap-x-2 gap-y-6 @xs:grid-cols-2">
             <FormField
               name="city"
               control={form.control}
@@ -183,7 +185,7 @@ export function JobListingForm({
                   <FormLabel>Province</FormLabel>
                   <Select
                     value={field.value ?? ""}
-                    onValueChange={val =>
+                    onValueChange={(val) =>
                       field.onChange(val === NONE_SELECT_VALUE ? null : val)
                     }
                   >
@@ -222,7 +224,7 @@ export function JobListingForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {locationRequirements.map(lr => (
+                    {locationRequirements.map((lr) => (
                       <SelectItem key={lr} value={lr}>
                         {formatLocationRequirement(lr)}
                       </SelectItem>
@@ -233,7 +235,7 @@ export function JobListingForm({
             )}
           />
         </div>
-        <div className="grid grid-cols-1 @md:grid-cols-2 gap-x-4 gap-y-6 items-start">
+        <div className="grid grid-cols-1 items-start gap-x-4 gap-y-6 @md:grid-cols-2">
           <FormField
             name="type"
             control={form.control}
@@ -247,7 +249,7 @@ export function JobListingForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {jobListingTypes.map(type => (
+                    {jobListingTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {formatJobType(type)}
                       </SelectItem>
@@ -271,7 +273,7 @@ export function JobListingForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {experienceLevels.map(experience => (
+                    {experienceLevels.map((experience) => (
                       <SelectItem key={experience} value={experience}>
                         {formatExperienceLevel(experience)}
                       </SelectItem>
@@ -307,5 +309,5 @@ export function JobListingForm({
         </Button>
       </form>
     </Form>
-  )
+  );
 }

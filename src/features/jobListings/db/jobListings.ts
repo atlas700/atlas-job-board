@@ -1,30 +1,23 @@
 import { db } from "@/server/db";
-import { OrganizationTable } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
-import { revalidateOrganizationCache } from "./cache/jobListings";
+import { JobListingTable } from "@/server/db/schema";
+import { revalidateJobListingsCache } from "./cache/jobListings";
 
-export async function createOrganization(
-  data: typeof OrganizationTable.$inferInsert,
+export async function insertJobListing(
+  data: typeof JobListingTable.$inferInsert,
 ) {
-  await db.insert(OrganizationTable).values(data).onConflictDoNothing();
+  const [insertedJobListing] = await db
+    .insert(JobListingTable)
+    .values(data)
+    .returning({
+      id: JobListingTable.id,
+      organizationId: JobListingTable.organizationId,
+    });
 
-  revalidateOrganizationCache(data.id);
-}
+    if(!insertedJobListing) {
+      throw new Error("Failed to insert job listing");
+    }
 
-export async function updateOrganization(
-  id: string,
-  data: Partial<typeof OrganizationTable.$inferInsert>,
-) {
-  await db
-    .update(OrganizationTable)
-    .set(data)
-    .where(eq(OrganizationTable.id, id));
+  revalidateJobListingsCache(insertedJobListing);
 
-  revalidateOrganizationCache(id);
-}
-
-export async function deleteOrganization(id: string) {
-  await db.delete(OrganizationTable).where(eq(OrganizationTable.id, id));
-
-  revalidateOrganizationCache(id);
+  return insertedJobListing;
 }

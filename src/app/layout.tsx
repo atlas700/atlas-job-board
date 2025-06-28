@@ -1,6 +1,7 @@
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@/services/clerk/components/ClerkProvider";
 import "@/styles/globals.css";
-import "@mdxeditor/editor/style.css"
+import "@mdxeditor/editor/style.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
@@ -22,7 +23,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={`${geist.variable} dark`}>
-        <body className="font-sans antialiased">{children}</body>
+        <body className="font-sans antialiased">
+          {children}
+
+          <Toaster />
+        </body>
       </html>
     </ClerkProvider>
   );
