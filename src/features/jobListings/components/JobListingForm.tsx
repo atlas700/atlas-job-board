@@ -81,9 +81,9 @@ export function JobListingForm({
       : createJobListing
     const res = await action(data)
 
-    if (res.error) {
-      toast.error(res.message)
-    }
+    // if (res.error) {
+    //   toast.error(res.message)
+    // }
   }
 
   return (

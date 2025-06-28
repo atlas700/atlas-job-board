@@ -1,6 +1,6 @@
 import { ClerkProvider } from "@/services/clerk/components/ClerkProvider";
 import "@/styles/globals.css";
-
+import "@mdxeditor/editor/style.css"
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
