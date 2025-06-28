@@ -1,4 +1,4 @@
-import { getJobListingsOrganizationTag } from "@/features/organizations/db/jobListings/cache/jobListings";
+import { getJobListingsOrganizationTag } from "@/features/jobListings/db/cache/jobListings";
 import { db } from "@/server/db";
 import { OrganizationTable } from "@/server/db/schema";
 import { getCurrentOrganization } from "@/services/clerk/lib/getCurrentAuth";
