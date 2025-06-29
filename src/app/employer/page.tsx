@@ -1,6 +1,6 @@
 import { getJobListingsOrganizationTag } from "@/features/jobListings/db/cache/jobListings";
 import { db } from "@/server/db";
-import { OrganizationTable } from "@/server/db/schema";
+import { JobListingTable } from "@/server/db/schema";
 import { getCurrentOrganization } from "@/services/clerk/lib/getCurrentAuth";
 import { desc, eq } from "drizzle-orm";
 import { unstable_cacheTag as cacheTag } from "next/cache";
@@ -35,9 +35,9 @@ async function getRecentJobListing(orgId: string) {
   "use cache";
   cacheTag(getJobListingsOrganizationTag(orgId));
 
-  return await db.query.OrganizationTable.findFirst({
-    where: eq(OrganizationTable.id, orgId),
+  return await db.query.JobListingTable.findFirst({
+    where: eq(JobListingTable.organizationId, orgId),
     columns: { id: true },
-    orderBy: desc(OrganizationTable.createdAt),
+    orderBy: desc(JobListingTable.createdAt),
   });
 }
